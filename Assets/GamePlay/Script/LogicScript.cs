@@ -114,6 +114,8 @@ namespace GamePlay.Script
 
         public void EndSong()
         {
+            if (combo > maxCombo)
+                maxCombo = combo;
             if (score > Date.Records[4])
             {
                 Date.Records[4] = score;
@@ -122,8 +124,8 @@ namespace GamePlay.Script
 
             Date.PreviousScore = score;
             Date.Combo = maxCombo;
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Result");
             SaveRecords();
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Result");
         }
 
         public void UpdateProgressBar(float value)

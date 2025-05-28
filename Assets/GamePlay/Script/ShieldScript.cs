@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using System.Collections;
 
@@ -5,14 +7,14 @@ namespace GamePlay.Script
 {
     public class ShieldScript : MonoBehaviour
     {
-        private bool touch;
-        private GameObject touchObject;
+        public Queue<GameObject> touchsObject = new Queue<GameObject>();
         public LogicScript logic;
         private SpriteRenderer spriteRenderer;
 
         [Header("Shield Sprites")]
         public Sprite normalShield;
         public Sprite newShield;
+        public string[] inputsKey = {"x","z"};
 
         private void Start()
         {
@@ -25,11 +27,14 @@ namespace GamePlay.Script
 
         private void Update()
         {
-            if (touch && (Input.GetKeyDown("x") || Input.GetKeyDown("z")))
+            if (touchsObject.Count!=0 && inputsKey.Any(Input.GetKeyDown) || Input.GetMouseButtonDown(0))
             {
                 StartCoroutine(ShieldHitEffect());
                 var distance = (transform.position - touchObject.transform.position).magnitude;
                 logic.AddScore(distance);
+                var touchObject = touchsObject.Dequeue(); //Объект может быть null
+                var distanse = (transform.position-touchObject.transform.position).magnitude;
+                logic.AddScore(distanse);
                 Destroy(touchObject);
             }
         }
@@ -42,15 +47,14 @@ namespace GamePlay.Script
         }
 
         private void OnTriggerEnter2D(Collider2D other)
-        {
-            touch = true;
-            touchObject = other.gameObject;
+        { 
+            touchsObject.Enqueue(other.gameObject);
+            Debug.Log(touchsObject.Count);
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            touch = false;
-            touchObject = null;
+            //Надо удалить объект из очереди, если он перестает касаться щита
         }
     }
 }
