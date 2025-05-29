@@ -14,27 +14,33 @@ namespace GamePlay.Script
         [Header("Shield Sprites")]
         public Sprite normalShield;
         public Sprite newShield;
-        public string[] inputsKey = {"x","z"};
+        public string[] inputsKey = { "x", "z" };
 
         private void Start()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
             transform.position = new Vector3(Date.RadiusCircle, 0, 0);
             logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
-            touch = false;
+            // Удалено: touch = false; (переменная touch больше не используется)
             spriteRenderer.sprite = normalShield;
         }
 
         private void Update()
         {
-            if (touchsObject.Count!=0 && inputsKey.Any(Input.GetKeyDown) || Input.GetMouseButtonDown(0))
+            // Проверяем, есть ли объекты в очереди и было ли нажатие
+            if (touchsObject.Count != 0 && (inputsKey.Any(key => Input.GetKeyDown(key)) || Input.GetMouseButtonDown(0)))
             {
                 StartCoroutine(ShieldHitEffect());
-                var distance = (transform.position - touchObject.transform.position).magnitude;
+
+                // Получаем первый объект из очереди
+                GameObject touchObject = touchsObject.Dequeue();
+
+                // Проверяем, что объект не был уничтожен
+                if (touchObject == null) return;
+
+                // Рассчитываем дистанцию
+                float distance = (transform.position - touchObject.transform.position).magnitude;
                 logic.AddScore(distance);
-                var touchObject = touchsObject.Dequeue(); //Объект может быть null
-                var distanse = (transform.position-touchObject.transform.position).magnitude;
-                logic.AddScore(distanse);
                 Destroy(touchObject);
             }
         }
@@ -47,14 +53,23 @@ namespace GamePlay.Script
         }
 
         private void OnTriggerEnter2D(Collider2D other)
-        { 
+        {
             touchsObject.Enqueue(other.gameObject);
-            Debug.Log(touchsObject.Count);
+            Debug.Log("Note added. Queue count: " + touchsObject.Count);
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            //Надо удалить объект из очереди, если он перестает касаться щита
+            // Создаем временный список для безопасного удаления
+            List<GameObject> tempList = new List<GameObject>(touchsObject);
+
+            // Удаляем объект, если он есть в очереди
+            if (tempList.Contains(other.gameObject))
+            {
+                tempList.Remove(other.gameObject);
+                touchsObject = new Queue<GameObject>(tempList);
+                Debug.Log("Note removed. Queue count: " + touchsObject.Count);
+            }
         }
     }
 }
