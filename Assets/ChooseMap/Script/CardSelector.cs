@@ -2,6 +2,7 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video; // Добавляем пространство имен для работы с видео
 
 public class CardSelector : MonoBehaviour
 {
@@ -9,6 +10,25 @@ public class CardSelector : MonoBehaviour
     public Transform content; // Контейнер для карт
     public string[] cardNames; // Названия карт
     public ScrollRect scrollRect; // Ссылка на ScrollRect
+
+    [Header("Background Settings")]
+    public GameObject mapBackground; // Объект с фоновым изображением (Map)
+    public VideoPlayer videoBackground; // Компонент VideoPlayer на объекте Video
+
+    private int _firstCardIndex = 0; // Индекс первой карточки (уровня) а зачем, шутка
+
+
+    void Start()
+    {
+        // ... существующий код ...
+
+        // Инициализация видео
+        if (videoBackground != null)
+        {
+            videoBackground.Stop();
+            videoBackground.gameObject.SetActive(false);
+        }
+    }
 
     void LoadCards()
     {
@@ -102,17 +122,39 @@ public class CardSelector : MonoBehaviour
     {
         // Увеличиваем размер карточки
         card.transform.localScale = new Vector3(1.7f, 1.7f, 1f);
-
-        // Смещаем карточку влево на 10 единиц (можете изменить это значение по своему усмотрению)
         card.transform.localPosition += new Vector3(-180f, 0f, 0f);
+
+        // Проверяем, является ли карточка первой
+        int cardIndex = card.transform.GetSiblingIndex();
+        if (cardIndex == _firstCardIndex)
+        {
+            // Включаем видео только для первой карточки
+            if (mapBackground != null) mapBackground.SetActive(false);
+            if (videoBackground != null)
+            {
+                videoBackground.gameObject.SetActive(true);
+                videoBackground.Play();
+            }
+        }
     }
 
     void OnPointerExit(GameObject card)
     {
         // Возвращаем размер карточки
         card.transform.localScale = new Vector3(1f, 1f, 1f);
-
-        // Возвращаем карточку на исходную позицию
         card.transform.localPosition -= new Vector3(-180f, 0f, 0f);
+
+        // Проверяем, является ли карточка первой
+        int cardIndex = card.transform.GetSiblingIndex();
+        if (cardIndex == _firstCardIndex)
+        {
+            // Выключаем видео только для первой карточки
+            if (videoBackground != null)
+            {
+                videoBackground.Stop();
+                videoBackground.gameObject.SetActive(false);
+            }
+            if (mapBackground != null) mapBackground.SetActive(true);
+        }
     }
 }
