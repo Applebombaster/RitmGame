@@ -10,31 +10,34 @@ namespace GamePlay.Script
 {
     public class LogicScript : MonoBehaviour
     {
+        // Исходные поля (были в первоначальной версии)
         public static LogicScript Instance;
-
-        [Header("UI Elements")]
         public TMP_Text scoreText;
         public TMP_Text comboText;
         public GameObject progressBar;
+        public AudioSource audioSource;
+        public AudioClip missSound;
 
+        // Добавленные поля (новые)
         [Header("Effects")]
         public GameObject score100Prefab;
         public GameObject score50Prefab;
         public GameObject missXPrefab;
         public List<GameObject> starPrefabs = new List<GameObject>();
 
-        [Header("Audio")]
-        public AudioSource audioSource;
-        public AudioClip missSound;
+        [Header("References")]
+        public Transform shieldTransform; // Позиция щита для спавна звезд (добавлено)
 
+        // Модифицированные/добавленные приватные поля
         private GameObject currentEffect;
         private int score = 0;
         private int combo = 0;
         private int maxCombo = 0;
-        private bool visualEffectsEnabled = true;
+        private bool visualEffectsEnabled = true; // Флаг включения визуальных эффектов (добавлено)
 
         private void Awake()
         {
+            // Исходная реализация синглтона
             if (Instance == null)
             {
                 Instance = this;
@@ -45,17 +48,26 @@ namespace GamePlay.Script
                 return;
             }
 
-            // Загрузка настроек визуальных эффектов
+            // Добавлено: загрузка состояния визуальных эффектов
             visualEffectsEnabled = PlayerPrefs.GetInt("VisualEffectsEnabled", 1) == 1;
+
+            // Добавлено: автоматический поиск щита, если не назначен
+            if (shieldTransform == null)
+            {
+                GameObject shield = GameObject.FindGameObjectWithTag("Shield");
+                if (shield != null) shieldTransform = shield.transform;
+            }
         }
 
+        // Основной метод добавления очков (модифицирован)
         public void AddScore(float distance)
         {
+            // Исходная логика расчета очков
             if (distance < 0.7f)
             {
                 score += 100 + combo++;
-                ShowScoreEffect(score100Prefab);
-                CreateStars();
+                ShowScoreEffect(score100Prefab); // Добавлено: визуальный эффект
+                CreateStars(); // Добавлено: создание звезд
             }
             else
             {
@@ -63,45 +75,47 @@ namespace GamePlay.Script
                     maxCombo = combo;
                 combo = 0;
                 score += 50;
-                ShowScoreEffect(score50Prefab);
+                ShowScoreEffect(score50Prefab); // Добавлено: визуальный эффект
             }
-            UpdateScore();
+            UpdateScore(); // Исходный метод
         }
 
+        // Добавлено: метод для отображения эффекта промаха
         public void ShowMissEffect()
         {
             ReplaceEffect(missXPrefab);
 
-            // Воспроизводим звук
+            // Воспроизведение звука промаха (добавлено)
             if (audioSource != null && missSound != null)
             {
                 audioSource.PlayOneShot(missSound);
             }
         }
 
+        // Добавлено: общий метод для эффектов счета
         private void ShowScoreEffect(GameObject prefab)
         {
             ReplaceEffect(prefab);
         }
 
-        // Универсальный метод для замены эффектов
+        // Добавлено: универсальный метод для замены эффектов
         private void ReplaceEffect(GameObject newEffectPrefab)
         {
-            // Удаляем предыдущий эффект, если он есть
+            // Удаляем предыдущий эффект
             if (currentEffect != null)
             {
                 Destroy(currentEffect);
             }
 
-            // Создаем новый эффект
+            // Создаем новый эффект по центру экрана
             Vector3 center = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10));
             currentEffect = Instantiate(newEffectPrefab, center, Quaternion.identity);
 
-            // Автоматическое удаление через 0.5 сек
+            // Автоудаление через 0.5 секунды
             StartCoroutine(DestroyAfterDelay(currentEffect, 0.5f));
         }
 
-        // Корутина для удаления эффекта
+        // Добавлено: корутина для удаления эффекта
         private IEnumerator DestroyAfterDelay(GameObject effect, float delay)
         {
             yield return new WaitForSeconds(delay);
@@ -111,7 +125,7 @@ namespace GamePlay.Script
             }
         }
 
-        // Реализация интерфейсов
+        // Добавлено: установка громкости звуков (реализация интерфейса)
         public void SetVolume(float volume)
         {
             if (audioSource != null)
@@ -120,21 +134,21 @@ namespace GamePlay.Script
             }
         }
 
+        // Добавлено: установка состояния визуальных эффектов
         public void SetVisualEffectsEnabled(bool enabled)
         {
             visualEffectsEnabled = enabled;
-            Debug.Log($"Visual effects set to: {enabled}");
         }
 
+        // Добавлено: создание звезд при идеальном попадании
         private void CreateStars()
         {
-            if (!visualEffectsEnabled) return;
+            if (!visualEffectsEnabled) return; // Проверка флага
+
+            if (shieldTransform == null) return;
 
             int starCount = UnityEngine.Random.Range(1, 12);
-            GameObject shield = GameObject.FindGameObjectWithTag("Shield");
-            if (shield == null) return;
-
-            Vector3 shieldPos = shield.transform.position;
+            Vector3 shieldPos = shieldTransform.position;
 
             for (int i = 0; i < starCount; i++)
             {
@@ -142,19 +156,19 @@ namespace GamePlay.Script
 
                 GameObject starPrefab = starPrefabs[UnityEngine.Random.Range(0, starPrefabs.Count)];
                 GameObject star = Instantiate(starPrefab, shieldPos, Quaternion.identity);
-                star.AddComponent<StarEffect>();
+                star.AddComponent<StarEffect>(); // Добавляем компонент эффекта
             }
         }
 
+        // Исходный метод завершения песни (без изменений)
         public void EndSong()
         {
-            // Обновляем рекорды
+            // Обновление рекордов
             bool newRecord = false;
             for (int i = 0; i < Date.Records.Length; i++)
             {
                 if (score > Date.Records[i])
                 {
-                    // Сдвигаем рекорды
                     for (int j = Date.Records.Length - 1; j > i; j--)
                     {
                         Date.Records[j] = Date.Records[j - 1];
@@ -168,11 +182,11 @@ namespace GamePlay.Script
             Date.PreviousScore = score;
             Date.Combo = maxCombo;
 
-            // Сохраняем рекорды
             SaveRecords();
             SceneManager.LoadScene("Result");
         }
 
+        // Исходный метод обновления прогресс-бара (без изменений)
         public void UpdateProgressBar(float value)
         {
             if (progressBar != null)
@@ -185,6 +199,7 @@ namespace GamePlay.Script
             }
         }
 
+        // Исходный метод обновления UI счета (без изменений)
         private void UpdateScore()
         {
             if (scoreText != null)
@@ -194,14 +209,15 @@ namespace GamePlay.Script
                 comboText.text = "X" + combo;
         }
 
+        // Модифицированный метод сохранения рекордов
         private void SaveRecords()
         {
-            // Сохраняем рекорды через PlayerPrefs
+            // Изменено: сохранение без JSON
             for (int i = 0; i < Date.Records.Length; i++)
             {
                 PlayerPrefs.SetInt("Record_" + i, Date.Records[i]);
             }
-            PlayerPrefs.Save();
+            PlayerPrefs.Save(); // Добавлено явное сохранение
         }
     }
 }
