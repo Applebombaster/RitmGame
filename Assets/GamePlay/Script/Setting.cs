@@ -9,6 +9,7 @@ namespace GamePlay.Script
         public static int PreviousScore;
         public static int MaxScore;
         public static int Combo;
+        public static string NameSong = "sunset_butttttttt";
     }
     public class SupportClass<T>
     {
@@ -17,6 +18,20 @@ namespace GamePlay.Script
         public SupportClass(T[] item)
         {
             Item = item;
+        }
+    }
+    
+    public class NoteRecord<T>
+    {
+        public T[] Note;
+        public string[] LongNote;
+        public string[] Spinner;
+
+        public NoteRecord(T[] note, string[] longNote, string[] spinner)
+        {
+            Note = note;
+            LongNote = longNote;
+            Spinner = spinner;
         }
     }
 }

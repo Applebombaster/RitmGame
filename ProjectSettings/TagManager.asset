@@ -8,6 +8,10 @@ TagManager:
   - Logic
   - Shield
   - MenuMusic
+  - SpawnNote
+  - LongNote
+  - Note
+  - Spinner
   layers:
   - Default
   - TransparentFX

@@ -1,21 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.UI;
 using UnityEngine;
-using TMPro; // �� ������ �������� ���� using ��� TextMesh Pro
+using TMPro;
+using GamePlay.Script;
 
 public class PauseMenu : MonoBehaviour
 {
-    public GameObject pauseMenuPanel; // ������ ���� �����
-    public TMP_Text pauseText; // ����� "Esc - Pause" � �������������� TextMesh Pro
+    public GameObject pauseMenuPanel;
+    public TMP_Text pauseText;
     private bool isPaused = false;
-    public AudioSource musicSource; // ������ �� AudioSource ��� ������
+    public AudioSource musicSource;
+    private SpawnNote spawnNote;
 
     void Start()
     {
-        pauseMenuPanel.SetActive(false); // �������� ���� ����� � ������
-        pauseText.gameObject.SetActive(true); // ���������� �����
+        pauseMenuPanel.SetActive(false);
+        pauseText.gameObject.SetActive(true);
         Invoke("HidePauseText", 4f);
+        spawnNote = GameObject.FindGameObjectWithTag("SpawnNote").GetComponent<SpawnNote>();
     }
 
     void Update()
@@ -23,13 +23,9 @@ public class PauseMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused)
-            {
                 ResumeGame();
-            }
             else
-            {
                 PauseGame();
-            }
         }
     }
 
@@ -39,6 +35,8 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0; // ������������� �����
         musicSource.Pause(); // ���������������� ������
         pauseMenuPanel.SetActive(true); // ���������� ���� �����
+        ControlScript.isPause = true;
+        spawnNote.Pause(true);
     }
 
     void ResumeGame()
@@ -47,6 +45,8 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1; // ���������� �����
         musicSource.UnPause(); // ������������ ������
         pauseMenuPanel.SetActive(false); // �������� ���� �����
+        spawnNote.Pause(false);
+        ControlScript.isPause = false;
     }
 
     void HidePauseText()

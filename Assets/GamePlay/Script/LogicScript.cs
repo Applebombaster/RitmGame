@@ -10,7 +10,7 @@ namespace GamePlay.Script
 {
     public class LogicScript : MonoBehaviour
     {
-        // Исходные поля (были в первоначальной версии)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ)
         public static LogicScript Instance;
         public TMP_Text scoreText;
         public TMP_Text comboText;
@@ -18,7 +18,7 @@ namespace GamePlay.Script
         public AudioSource audioSource;
         public AudioClip missSound;
 
-        // Добавленные поля (новые)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ)
         [Header("Effects")]
         public GameObject score100Prefab;
         public GameObject score50Prefab;
@@ -26,18 +26,18 @@ namespace GamePlay.Script
         public List<GameObject> starPrefabs = new List<GameObject>();
 
         [Header("References")]
-        public Transform shieldTransform; // Позиция щита для спавна звезд (добавлено)
+        public Transform shieldTransform; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 
-        // Модифицированные/добавленные приватные поля
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         private GameObject currentEffect;
         private int score = 0;
         private int combo = 0;
         private int maxCombo = 0;
-        private bool visualEffectsEnabled = true; // Флаг включения визуальных эффектов (добавлено)
+        private bool visualEffectsEnabled = true; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 
         private void Awake()
         {
-            // Исходная реализация синглтона
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (Instance == null)
             {
                 Instance = this;
@@ -47,75 +47,74 @@ namespace GamePlay.Script
                 Destroy(gameObject);
                 return;
             }
-
-            // Добавлено: загрузка состояния визуальных эффектов
             visualEffectsEnabled = PlayerPrefs.GetInt("VisualEffectsEnabled", 1) == 1;
-
-            // Добавлено: автоматический поиск щита, если не назначен
             if (shieldTransform == null)
             {
-                GameObject shield = GameObject.FindGameObjectWithTag("Shield");
-                if (shield != null) shieldTransform = shield.transform;
+                var shield = GameObject.FindGameObjectWithTag("Shield");
+                if (shield)
+                    shieldTransform = shield.transform;
             }
         }
 
-        // Основной метод добавления очков (модифицирован)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         public void AddScore(float distance)
         {
-            // Исходная логика расчета очков
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             if (distance < 0.7f)
             {
                 score += 100 + combo++;
-                ShowScoreEffect(score100Prefab); // Добавлено: визуальный эффект
-                CreateStars(); // Добавлено: создание звезд
+                ShowScoreEffect(score100Prefab); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+                CreateStars(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             }
-            else
+            else if (distance<2.6f)
             {
                 if (combo > maxCombo)
                     maxCombo = combo;
                 combo = 0;
                 score += 50;
-                ShowScoreEffect(score50Prefab); // Добавлено: визуальный эффект
+                ShowScoreEffect(score50Prefab); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             }
-            UpdateScore(); // Исходный метод
+            else
+                ShowMissEffect();
+            UpdateScore(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         }
 
-        // Добавлено: метод для отображения эффекта промаха
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         public void ShowMissEffect()
         {
             ReplaceEffect(missXPrefab);
 
-            // Воспроизведение звука промаха (добавлено)
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
             if (audioSource != null && missSound != null)
             {
                 audioSource.PlayOneShot(missSound);
             }
         }
 
-        // Добавлено: общий метод для эффектов счета
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         private void ShowScoreEffect(GameObject prefab)
         {
             ReplaceEffect(prefab);
         }
 
-        // Добавлено: универсальный метод для замены эффектов
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         private void ReplaceEffect(GameObject newEffectPrefab)
         {
-            // Удаляем предыдущий эффект
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             if (currentEffect != null)
             {
                 Destroy(currentEffect);
             }
 
-            // Создаем новый эффект по центру экрана
-            Vector3 center = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10));
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+            var center = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10));
             currentEffect = Instantiate(newEffectPrefab, center, Quaternion.identity);
 
-            // Автоудаление через 0.5 секунды
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 0.5 пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             StartCoroutine(DestroyAfterDelay(currentEffect, 0.5f));
         }
 
-        // Добавлено: корутина для удаления эффекта
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         private IEnumerator DestroyAfterDelay(GameObject effect, float delay)
         {
             yield return new WaitForSeconds(delay);
@@ -125,7 +124,7 @@ namespace GamePlay.Script
             }
         }
 
-        // Добавлено: установка громкости звуков (реализация интерфейса)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         public void SetVolume(float volume)
         {
             if (audioSource != null)
@@ -134,16 +133,16 @@ namespace GamePlay.Script
             }
         }
 
-        // Добавлено: установка состояния визуальных эффектов
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         public void SetVisualEffectsEnabled(bool enabled)
         {
             visualEffectsEnabled = enabled;
         }
 
-        // Добавлено: создание звезд при идеальном попадании
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         private void CreateStars()
         {
-            if (!visualEffectsEnabled) return; // Проверка флага
+            if (!visualEffectsEnabled) return; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
             if (shieldTransform == null) return;
 
@@ -156,14 +155,14 @@ namespace GamePlay.Script
 
                 GameObject starPrefab = starPrefabs[UnityEngine.Random.Range(0, starPrefabs.Count)];
                 GameObject star = Instantiate(starPrefab, shieldPos, Quaternion.identity);
-                star.AddComponent<StarEffect>(); // Добавляем компонент эффекта
+                star.AddComponent<StarEffect>(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             }
         }
 
-        // Исходный метод завершения песни (без изменений)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         public void EndSong()
         {
-            // Обновление рекордов
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             bool newRecord = false;
             for (int i = 0; i < Date.Records.Length; i++)
             {
@@ -186,7 +185,7 @@ namespace GamePlay.Script
             SceneManager.LoadScene("Result");
         }
 
-        // Исходный метод обновления прогресс-бара (без изменений)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         public void UpdateProgressBar(float value)
         {
             if (progressBar != null)
@@ -199,7 +198,7 @@ namespace GamePlay.Script
             }
         }
 
-        // Исходный метод обновления UI счета (без изменений)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         private void UpdateScore()
         {
             if (scoreText != null)
@@ -209,15 +208,15 @@ namespace GamePlay.Script
                 comboText.text = "X" + combo;
         }
 
-        // Модифицированный метод сохранения рекордов
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         private void SaveRecords()
         {
-            // Изменено: сохранение без JSON
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ JSON
             for (int i = 0; i < Date.Records.Length; i++)
             {
                 PlayerPrefs.SetInt("Record_" + i, Date.Records[i]);
             }
-            PlayerPrefs.Save(); // Добавлено явное сохранение
+            PlayerPrefs.Save(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         }
     }
 }
