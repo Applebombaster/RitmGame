@@ -1,18 +1,46 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class SpinnerScript : MonoBehaviour
+namespace GamePlay.Script
 {
-    // Start is called before the first frame update
-    void Start()
+    public class SpinnerScript : MonoBehaviour
     {
-        
-    }
+        public Rigidbody2D myRigidbody2D;
+        private float speed = 6;
+        private float timeLive = 2;
+        private float time;
+        private float scale = 0;
+        private float positionScale;
+        private float targetScale = 1;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        void Start()
+        {
+            positionScale = Date.RadiusCircle / 2;
+            transform.localScale = new Vector3(scale, scale, scale);
+            var rotation = GameObject.FindGameObjectWithTag("Center").transform.rotation.eulerAngles.z;
+            var rotate = Random.Range(-90, 90);
+            var rot = (rotation + rotate) / 180 * Mathf.PI;
+            myRigidbody2D.velocity = new Vector2(Mathf.Cos(rot) * speed,
+                Mathf.Sin(rot) * speed);
+        }
+
+        void Update()
+        {
+            time += Time.deltaTime;
+            UpdateScale();
+            if (time > timeLive)
+            {
+                LogicScript.Instance.ShowMissEffect();
+                Destroy(gameObject);
+            }
+        }
+
+        private void UpdateScale()
+        {
+            if (scale < targetScale)
+            {
+                scale = transform.position.magnitude / positionScale;
+                transform.localScale = new Vector3(scale, scale, 1);
+            }
+        }
     }
 }

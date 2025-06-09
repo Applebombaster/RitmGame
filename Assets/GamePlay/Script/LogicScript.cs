@@ -19,14 +19,12 @@ namespace GamePlay.Script
         public AudioClip missSound;
 
         // ����������� ���� (�����)
-        [Header("Effects")]
-        public GameObject score100Prefab;
+        [Header("Effects")] public GameObject score100Prefab;
         public GameObject score50Prefab;
         public GameObject missXPrefab;
         public List<GameObject> starPrefabs = new List<GameObject>();
 
-        [Header("References")]
-        public Transform shieldTransform; // ������� ���� ��� ������ ����� (���������)
+        [Header("References")] public Transform shieldTransform; // ������� ���� ��� ������ ����� (���������)
 
         // ����������������/����������� ��������� ����
         private GameObject currentEffect;
@@ -47,6 +45,7 @@ namespace GamePlay.Script
                 Destroy(gameObject);
                 return;
             }
+
             visualEffectsEnabled = PlayerPrefs.GetInt("VisualEffectsEnabled", 1) == 1;
             if (shieldTransform == null)
             {
@@ -59,24 +58,34 @@ namespace GamePlay.Script
         // �������� ����� ���������� ����� (�������������)
         public void AddScore(float distance)
         {
-            // �������� ������ ������� �����
             if (distance < 0.7f)
             {
                 score += 100 + combo++;
-                ShowScoreEffect(score100Prefab); // ���������: ���������� ������
-                CreateStars(); // ���������: �������� �����
+                ShowScoreEffect(score100Prefab);
+                CreateStars();
             }
-            else if (distance<2.6f)
+            else if (distance < 2.6f)
             {
                 if (combo > maxCombo)
                     maxCombo = combo;
                 combo = 0;
                 score += 50;
-                ShowScoreEffect(score50Prefab); // ���������: ���������� ������
+                ShowScoreEffect(score50Prefab);
             }
             else
                 ShowMissEffect();
+
             UpdateScore(); // �������� �����
+        }
+
+        public void EffectSpinner(int countRotate, bool isEnd)
+        {
+            //МЕСТО ДЛЯ АНИМАЦИИ ИЗМЕНЕНИЯ ИКСОВ   
+            if (isEnd)
+            {
+                score += (countRotate * 100);
+                UpdateScore();
+            }
         }
 
         // ���������: ����� ��� ����������� ������� �������
@@ -91,7 +100,6 @@ namespace GamePlay.Script
             }
         }
 
-        // ���������: ����� ����� ��� �������� �����
         private void ShowScoreEffect(GameObject prefab)
         {
             ReplaceEffect(prefab);
@@ -146,8 +154,8 @@ namespace GamePlay.Script
 
             if (shieldTransform == null) return;
 
-            int starCount = UnityEngine.Random.Range(1, 12);
-            Vector3 shieldPos = shieldTransform.position;
+            var starCount = UnityEngine.Random.Range(1, 12);
+            var shieldPos = shieldTransform.position;
 
             for (int i = 0; i < starCount; i++)
             {
@@ -163,8 +171,8 @@ namespace GamePlay.Script
         public void EndSong()
         {
             // ���������� ��������
-            bool newRecord = false;
-            for (int i = 0; i < Date.Records.Length; i++)
+            var newRecord = false;
+            for (var i = 0; i < Date.Records.Length; i++)
             {
                 if (score > Date.Records[i])
                 {
@@ -172,6 +180,7 @@ namespace GamePlay.Script
                     {
                         Date.Records[j] = Date.Records[j - 1];
                     }
+
                     Date.Records[i] = score;
                     newRecord = true;
                     break;
@@ -216,6 +225,7 @@ namespace GamePlay.Script
             {
                 PlayerPrefs.SetInt("Record_" + i, Date.Records[i]);
             }
+
             PlayerPrefs.Save(); // ��������� ����� ����������
         }
     }

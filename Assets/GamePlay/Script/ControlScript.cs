@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace GamePlay.Script
@@ -5,11 +6,15 @@ namespace GamePlay.Script
     public class ControlScript : MonoBehaviour
     {
         public static bool isPause;
-        public static bool isCount = false;
+        public bool isCount;
         public bool First;
-        public float? previousRotate = null;
-        public bool isClockwise;
-        public bool flag;
+        private float? previousRotate = null;
+        public float allRotation;
+
+        private void Start()
+        {
+            First = true;
+        }
 
         void Update()
         {
@@ -24,45 +29,32 @@ namespace GamePlay.Script
             if (position.x < 0)
                 rotation += 180;
             transform.rotation = Quaternion.Euler(0, 0, rotation);
+            if (isCount)
+                CountRotation();
         }
 
-        public bool CountRotation()
+
+        private void CountRotation()
         {
             var rotation = transform.rotation.eulerAngles.z;
+            Debug.Log(First);
+
             if (First)
             {
-                if (previousRotate is null)
-                {
+                if (previousRotate == null)
                     previousRotate = rotation;
-                    return true;
-                }
-
-                isClockwise = previousRotate < rotation;
                 First = false;
             }
             else
             {
-                if (isClockwise)
-                {
-                    if (Mathf.Abs(Mathf.Abs((float)previousRotate) - Mathf.Abs(rotation)) < 10)
-                    {
-                        flag = true;
-                        return flag;
-                    }
-                    flag = flag && previousRotate < rotation;
-                }
-                else
-                {
-                    if (Mathf.Abs(Mathf.Abs((float)previousRotate) - Mathf.Abs(rotation)) < 10)
-                    {
-                        flag = true;
-                        return flag;
-                    }
-                    flag = flag && previousRotate > rotation;
-                }
+                var delta = rotation - (float)previousRotate;
+                if (delta > 180)
+                    delta -= 360;
+                if (delta < -180)
+                    delta += 360;
+                allRotation += delta;
+                previousRotate = rotation;
             }
-
-            return flag;
         }
     }
 }

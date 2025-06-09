@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace GamePlay.Script
         public GameObject touchLongNote;
         public bool pressedLongNote;
         public GameObject touchSpinner;
+        public bool pressedSpinner;
 
         private void Start()
         {
@@ -61,6 +63,26 @@ namespace GamePlay.Script
                     touchLongNote = null;
                 }
             }
+            else if (touchSpinner || pressedSpinner)
+            {
+                if (inputsKey.Any(Input.GetKeyDown) || Input.GetMouseButtonDown(0))
+                {
+                    pressedSpinner = true;
+                    var distance = (transform.position - touchSpinner.transform.position).magnitude;
+                    control.isCount = true;
+                    logic.AddScore(distance);
+                    StartCoroutine(ShieldHitEffect());
+                    Destroy(touchSpinner);
+                }
+                if (inputsKey.Any(Input.GetKey) || Input.GetMouseButton(0))
+                    logic.EffectSpinner(Mathf.Abs((int)control.allRotation/360),false);
+                if (pressedSpinner && (inputsKey.Any(Input.GetKeyUp) || Input.GetMouseButtonUp(0)))
+                {
+                    logic.EffectSpinner(Mathf.Abs((int)control.allRotation/360),true);
+                    StartCoroutine(ShieldHitEffect());
+                    pressedSpinner = false;
+                }
+            }
         }
 
         private IEnumerator ShieldHitEffect()
@@ -74,7 +96,7 @@ namespace GamePlay.Script
         {
             if (other.tag.Equals("Note"))
                 touchsObject.Enqueue(other.gameObject);
-            else if (other.transform.parent.tag.Equals("LongNote") && other.tag.Equals("First"))
+            else if (other.tag.Equals("First")&&other.transform.parent.tag.Equals("LongNote"))
                 touchLongNote = other.transform.parent.gameObject;
             else if (other.tag.Equals("Spinner"))
                 touchSpinner = other.gameObject;
@@ -92,6 +114,8 @@ namespace GamePlay.Script
                 touchsObject = new Queue<GameObject>(tempList);
                 Debug.Log("Note removed. Queue count: " + touchsObject.Count);
             }
+            if (other.tag.Equals("Spinner"))
+                touchSpinner = null;
         }
     }
 }

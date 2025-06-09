@@ -12,6 +12,7 @@ TagManager:
   - LongNote
   - Note
   - Spinner
+  - First
   layers:
   - Default
   - TransparentFX
