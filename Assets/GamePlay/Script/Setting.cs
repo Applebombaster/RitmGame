@@ -9,7 +9,8 @@ namespace GamePlay.Script
         public static int PreviousScore;
         public static int MaxScore;
         public static int Combo;
-        public static string NameSong = "sunset_butttttttt";
+        public static string NameSong = "joakim";
+        
     }
     public class SupportClass<T>
     {

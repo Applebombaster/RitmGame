@@ -80,6 +80,7 @@ namespace GamePlay.Script
 
         public void EffectSpinner(int countRotate, bool isEnd)
         {
+            Debug.Log(countRotate);
             //МЕСТО ДЛЯ АНИМАЦИИ ИЗМЕНЕНИЯ ИКСОВ   
             if (isEnd)
             {

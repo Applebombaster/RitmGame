@@ -32,6 +32,7 @@ namespace GamePlay.Script
             listJson = Resources.Load<TextAsset>($"{Date.NameSong}_timing").ToString();
             TimingArrayNormal();
             timeStart = 0;
+            
             logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
             audioSource.volume = PlayerPrefs.GetFloat("MusicVolume", 0.75f);
             dspSongTime = (float)AudioSettings.dspTime;
@@ -44,7 +45,6 @@ namespace GamePlay.Script
         private void Update()
         {
             songPosition = (float)(AudioSettings.dspTime - dspSongTime);
-
             var progress = (audioSource.time - timeStart) / (audioSource.clip.length - timeStart);
             logic.UpdateProgressBar(progress);
 
@@ -55,21 +55,25 @@ namespace GamePlay.Script
 
         private void SpawnNotes()
         {
-            if (index[0] < noteTiming.Length && songPosition > noteTiming[index[0]])
+            if (index[0] < noteTiming.Length && songPosition > noteTiming[index[0]] - 10.0f / 6.0f)
             {
                 Instantiate(note);
                 index[0]++;
             }
 
-            if (index[1] < longNoteTiming.Length && songPosition > longNoteTiming[index[1]].start)
+            if (index[1] < longNoteTiming.Length && songPosition > longNoteTiming[index[1]].start - 10.0f / 6.0f)
             {
                 Instantiate(longNote);
+                GameObject.FindGameObjectWithTag("LongNote").GetComponent<LongNoteScript>().timeLive =
+                    longNoteTiming[index[1]].end - longNoteTiming[index[1]].start;
                 index[1]++;
             }
 
-            if (index[2] < spinnerTiming.Length && songPosition > spinnerTiming[index[2]].start)
+            if (index[2] < spinnerTiming.Length && songPosition > spinnerTiming[index[2]].start - 10.0f / 6.0f)
             {
                 Instantiate(spinner);
+                GameObject.FindGameObjectWithTag("Spinner").GetComponent<SpinnerScript>().timeALive =
+                    spinnerTiming[index[2]].end - spinnerTiming[index[2]].start;
                 index[2]++;
             }
         }

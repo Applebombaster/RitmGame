@@ -37,7 +37,6 @@ namespace GamePlay.Script
         private void CountRotation()
         {
             var rotation = transform.rotation.eulerAngles.z;
-            Debug.Log(First);
 
             if (First)
             {

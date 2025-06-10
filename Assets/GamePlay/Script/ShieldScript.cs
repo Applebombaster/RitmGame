@@ -72,17 +72,22 @@ namespace GamePlay.Script
                     control.isCount = true;
                     logic.AddScore(distance);
                     StartCoroutine(ShieldHitEffect());
-                    Destroy(touchSpinner);
+                    touchSpinner.GetComponent<SpriteRenderer>().enabled = false;
                 }
                 if (inputsKey.Any(Input.GetKey) || Input.GetMouseButton(0))
                     logic.EffectSpinner(Mathf.Abs((int)control.allRotation/360),false);
                 if (pressedSpinner && (inputsKey.Any(Input.GetKeyUp) || Input.GetMouseButtonUp(0)))
                 {
-                    logic.EffectSpinner(Mathf.Abs((int)control.allRotation/360),true);
-                    StartCoroutine(ShieldHitEffect());
-                    pressedSpinner = false;
+                    FinishSpinner();
                 }
             }
+        }
+
+        public void FinishSpinner()
+        {
+            logic.EffectSpinner(Mathf.Abs((int)control.allRotation/360),true);
+            StartCoroutine(ShieldHitEffect());
+            pressedSpinner = false;
         }
 
         private IEnumerator ShieldHitEffect()
@@ -114,8 +119,12 @@ namespace GamePlay.Script
                 touchsObject = new Queue<GameObject>(tempList);
                 Debug.Log("Note removed. Queue count: " + touchsObject.Count);
             }
+
             if (other.tag.Equals("Spinner"))
+            {
                 touchSpinner = null;
+                pressedSpinner = false;
+            }
         }
     }
 }

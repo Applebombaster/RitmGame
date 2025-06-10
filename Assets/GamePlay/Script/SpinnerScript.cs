@@ -6,14 +6,16 @@ namespace GamePlay.Script
     {
         public Rigidbody2D myRigidbody2D;
         private float speed = 6;
-        private float timeLive = 2;
+        private float timeLive;
         private float time;
         private float scale = 0;
         private float positionScale;
         private float targetScale = 1;
+        public float timeALive;
 
         void Start()
         {
+            timeLive = timeALive * 2;
             positionScale = Date.RadiusCircle / 2;
             transform.localScale = new Vector3(scale, scale, scale);
             var rotation = GameObject.FindGameObjectWithTag("Center").transform.rotation.eulerAngles.z;
@@ -26,12 +28,19 @@ namespace GamePlay.Script
         void Update()
         {
             time += Time.deltaTime;
-            UpdateScale();
-            if (time > timeLive)
+            if (time > timeALive)
+            {
+                GameObject.FindGameObjectWithTag("Center").transform.GetChild(0).gameObject.GetComponent<ShieldScript>()
+                    .FinishSpinner();
+                Destroy(gameObject);
+            }
+
+            if (timeALive == 0 && time > timeLive)
             {
                 LogicScript.Instance.ShowMissEffect();
                 Destroy(gameObject);
             }
+            UpdateScale();
         }
 
         private void UpdateScale()
