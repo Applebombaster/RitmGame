@@ -15,6 +15,7 @@ namespace GamePlay.Script
         public GameObject note;
         public GameObject longNote;
         public GameObject spinner;
+        public GameObject spinnerAnim;
 
         private float[] noteTiming;
         private (float start, float end)[] longNoteTiming;
@@ -72,6 +73,7 @@ namespace GamePlay.Script
             if (index[2] < spinnerTiming.Length && songPosition > spinnerTiming[index[2]].start - 10.0f / 6.0f)
             {
                 Instantiate(spinner);
+                Instantiate(spinnerAnim);
                 GameObject.FindGameObjectWithTag("Spinner").GetComponent<SpinnerScript>().timeALive =
                     spinnerTiming[index[2]].end - spinnerTiming[index[2]].start;
                 index[2]++;

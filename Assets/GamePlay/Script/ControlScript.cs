@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace GamePlay.Script
@@ -13,6 +12,7 @@ namespace GamePlay.Script
 
         private void Start()
         {
+            isPause = false;
             First = true;
         }
 

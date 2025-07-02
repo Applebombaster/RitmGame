@@ -1,16 +1,16 @@
+
 namespace GamePlay.Script
 {
     public static class Date
     {
         public static float RadiusCircle = 10.0f;
-        public static float VolumeSong = 0.1f;
-        public static int Difficult = 2;
         public static int[] Records = new int[5];
         public static int PreviousScore;
-        public static int MaxScore;
+        public static int MaxScore = 100000;
         public static int Combo;
-        public static string NameSong = "joakim";
-        
+        public static string NameSong = "music";
+        public static string NameVideo;
+
     }
     public class SupportClass<T>
     {

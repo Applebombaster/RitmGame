@@ -1,41 +1,40 @@
 using UnityEngine;
 using System.Collections;
 
-// Полностью новый скрипт для анимации звезд
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 public class StarEffect : MonoBehaviour
 {
-    public float lifeTime = 1f; // Время жизни эффекта
-    private Vector3 randomDirection; // Направление движения
+    public float lifeTime = 1f; // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    private Vector3 randomDirection; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     void Start()
     {
-        // Генерация случайного направления
         randomDirection = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized;
-        transform.localScale = Vector3.zero; // Начальный размер - 0
-        StartCoroutine(Animate()); // Запуск анимации
+        transform.localScale = Vector3.zero;
+        StartCoroutine(Animate());
     }
 
     IEnumerator Animate()
     {
         float timer = 0;
 
-        // Анимация в течение времени жизни
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         while (timer < lifeTime)
         {
-            // Плавное увеличение размера
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, timer / lifeTime);
 
-            // Движение в случайном направлении
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             transform.position += randomDirection * 2f * Time.deltaTime;
 
-            // Вращение
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             transform.Rotate(0, 0, 180 * Time.deltaTime);
 
             timer += Time.deltaTime;
             yield return null;
         }
 
-        // Уничтожение объекта после завершения анимации
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Destroy(gameObject);
     }
 }

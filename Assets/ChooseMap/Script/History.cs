@@ -35,7 +35,7 @@ public class TableSpawner : MonoBehaviour
 
     private void LoadRecords()
     {
-        var listJson = PlayerPrefs.GetString("SavedRecords");
+        var listJson = PlayerPrefs.GetString("sunset");
         Date.Records = JsonUtility.FromJson<SupportClass<int>>(listJson).Item;
     }
 }

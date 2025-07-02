@@ -1492,6 +1492,7 @@ MonoBehaviour:
   note: {fileID: 536074676711781926, guid: 8b120a2b40da58e4192c02ba58a9ccb6, type: 3}
   longNote: {fileID: 2730601175559787454, guid: 14d289f86aa7e8f4c9fbde8684ba99be, type: 3}
   spinner: {fileID: 536074676711781926, guid: 9c0e7a688b11fd64b89b5f1159a061b0, type: 3}
+  spinnerAnim: {fileID: 8408837377968165871, guid: 502632bdaf50dd448824a6c5c94cbd31, type: 3}
 --- !u!82 &548281149
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3018,6 +3019,7 @@ GameObject:
   - component: {fileID: 1465073313}
   - component: {fileID: 1465073312}
   - component: {fileID: 1465073315}
+  - component: {fileID: 1465073316}
   m_Layer: 0
   m_Name: Video
   m_TagString: Untagged
@@ -3088,6 +3090,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1465073311}
   m_CullTransparentMesh: 1
+--- !u!114 &1465073316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465073311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c787ecfe22a6d334db976531ed802366, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  video: {fileID: 1465073312}
 --- !u!1 &1486144477
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,9 +12,11 @@ namespace GamePlay.Script
         private float positionScale;
         private float targetScale = 1;
         public float timeALive;
+        public LogicScript logic;
 
         void Start()
         {
+            logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
             timeLive = timeALive * 2;
             positionScale = Date.RadiusCircle / 2;
             transform.localScale = new Vector3(scale, scale, scale);
@@ -32,14 +34,17 @@ namespace GamePlay.Script
             {
                 GameObject.FindGameObjectWithTag("Center").transform.GetChild(0).gameObject.GetComponent<ShieldScript>()
                     .FinishSpinner();
+                Destroy(GameObject.FindGameObjectWithTag("Anim").gameObject);
                 Destroy(gameObject);
             }
 
             if (timeALive == 0 && time > timeLive)
             {
-                LogicScript.Instance.ShowMissEffect();
+                logic.ShowMissEffect();
+                Destroy(GameObject.FindGameObjectWithTag("Anim").gameObject);
                 Destroy(gameObject);
             }
+
             UpdateScale();
         }
 

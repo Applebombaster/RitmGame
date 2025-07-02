@@ -13,6 +13,8 @@ TagManager:
   - Note
   - Spinner
   - First
+  - Anim
+  - Video
   layers:
   - Default
   - TransparentFX

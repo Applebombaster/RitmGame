@@ -11,9 +11,11 @@ namespace GamePlay.Script
         private float scale = 0;
         private float positionScale;
         private float targetScale = 1;
+        private LogicScript logic;
 
         void Start()
         {
+            logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
             positionScale = Date.RadiusCircle / 2;
             transform.localScale = new Vector3(scale, scale, scale);
             var rotation = GameObject.FindGameObjectWithTag("Center").transform.rotation.eulerAngles.z;
@@ -29,7 +31,7 @@ namespace GamePlay.Script
             UpdateScale();
             if (time > timeLive)
             {
-                LogicScript.Instance.ShowMissEffect();
+                logic.ShowMissEffect();
                 Destroy(gameObject);
             }
         }

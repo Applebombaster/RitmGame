@@ -10,8 +10,6 @@ namespace GamePlay.Script
 {
     public class LogicScript : MonoBehaviour
     {
-        // �������� ���� (���� � �������������� ������)
-        public static LogicScript Instance;
         public TMP_Text scoreText;
         public TMP_Text comboText;
         public GameObject progressBar;
@@ -35,17 +33,6 @@ namespace GamePlay.Script
 
         private void Awake()
         {
-            // �������� ���������� ���������
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-                return;
-            }
-
             visualEffectsEnabled = PlayerPrefs.GetInt("VisualEffectsEnabled", 1) == 1;
             if (shieldTransform == null)
             {
@@ -141,14 +128,11 @@ namespace GamePlay.Script
                 audioSource.volume = volume;
             }
         }
-
-        // ���������: ��������� ��������� ���������� ��������
         public void SetVisualEffectsEnabled(bool enabled)
         {
             visualEffectsEnabled = enabled;
         }
-
-        // ���������: �������� ����� ��� ��������� ���������
+        
         private void CreateStars()
         {
             if (!visualEffectsEnabled) return; // �������� �����
@@ -164,33 +148,22 @@ namespace GamePlay.Script
 
                 GameObject starPrefab = starPrefabs[UnityEngine.Random.Range(0, starPrefabs.Count)];
                 GameObject star = Instantiate(starPrefab, shieldPos, Quaternion.identity);
-                star.AddComponent<StarEffect>(); // ��������� ��������� �������
+                star.AddComponent<StarEffect>();
             }
         }
-
-        // �������� ����� ���������� ����� (��� ���������)
+        
         public void EndSong()
         {
-            // ���������� ��������
-            var newRecord = false;
-            for (var i = 0; i < Date.Records.Length; i++)
+            if (combo > maxCombo)
+                maxCombo = combo;
+            if (score > Date.Records[4])
             {
-                if (score > Date.Records[i])
-                {
-                    for (int j = Date.Records.Length - 1; j > i; j--)
-                    {
-                        Date.Records[j] = Date.Records[j - 1];
-                    }
-
-                    Date.Records[i] = score;
-                    newRecord = true;
-                    break;
-                }
+                Date.Records[4] = score;
+                Array.Sort(Date.Records, (a, b) => b.CompareTo(a));
             }
 
             Date.PreviousScore = score;
             Date.Combo = maxCombo;
-
             SaveRecords();
             SceneManager.LoadScene("Result");
         }
@@ -218,16 +191,10 @@ namespace GamePlay.Script
                 comboText.text = "X" + combo;
         }
 
-        // ���������������� ����� ���������� ��������
         private void SaveRecords()
         {
-            // ��������: ���������� ��� JSON
-            for (int i = 0; i < Date.Records.Length; i++)
-            {
-                PlayerPrefs.SetInt("Record_" + i, Date.Records[i]);
-            }
-
-            PlayerPrefs.Save(); // ��������� ����� ����������
+            var listJson = JsonUtility.ToJson(new SupportClass<int>(Date.Records), true);
+            PlayerPrefs.SetString("SavedRecords", listJson);
         }
     }
 }
