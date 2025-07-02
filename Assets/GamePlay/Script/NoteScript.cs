@@ -25,7 +25,7 @@ namespace GamePlay.Script
                 Mathf.Sin(rot) * speed);
         }
 
-        void Update()
+        private void Update()
         {
             time += Time.deltaTime;
             UpdateScale();

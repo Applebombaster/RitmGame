@@ -22,9 +22,7 @@ namespace GamePlay.Script
         public GameObject missXPrefab;
         public List<GameObject> starPrefabs = new List<GameObject>();
 
-        [Header("References")] public Transform shieldTransform; // ������� ���� ��� ������ ����� (���������)
-
-        // ����������������/����������� ��������� ����
+        [Header("References")] public Transform shieldTransform;
         private GameObject currentEffect;
         private int score = 0;
         private int combo = 0;
@@ -80,8 +78,6 @@ namespace GamePlay.Script
         public void ShowMissEffect()
         {
             ReplaceEffect(missXPrefab);
-
-            // ��������������� ����� ������� (���������)
             if (audioSource != null && missSound != null)
             {
                 audioSource.PlayOneShot(missSound);
@@ -93,24 +89,18 @@ namespace GamePlay.Script
             ReplaceEffect(prefab);
         }
 
-        // ���������: ������������� ����� ��� ������ ��������
         private void ReplaceEffect(GameObject newEffectPrefab)
         {
-            // ������� ���������� ������
             if (currentEffect != null)
             {
                 Destroy(currentEffect);
             }
 
-            // ������� ����� ������ �� ������ ������
             var center = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10));
             currentEffect = Instantiate(newEffectPrefab, center, Quaternion.identity);
 
-            // ������������ ����� 0.5 �������
             StartCoroutine(DestroyAfterDelay(currentEffect, 0.5f));
         }
-
-        // ���������: �������� ��� �������� �������
         private IEnumerator DestroyAfterDelay(GameObject effect, float delay)
         {
             yield return new WaitForSeconds(delay);

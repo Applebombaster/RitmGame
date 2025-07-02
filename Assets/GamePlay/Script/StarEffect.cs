@@ -21,10 +21,7 @@ public class StarEffect : MonoBehaviour
         // �������� � ������� ������� �����
         while (timer < lifeTime)
         {
-            // ������� ���������� �������
             transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, timer / lifeTime);
-
-            // �������� � ��������� �����������
             transform.position += randomDirection * 2f * Time.deltaTime;
 
             // ��������
