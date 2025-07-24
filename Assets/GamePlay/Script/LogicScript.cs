@@ -32,6 +32,7 @@ namespace GamePlay.Script
         // Добавляем константу для максимального количества записей
         private const int maxRecords = 5;
 
+
         private void Awake()
         {
             visualEffectsEnabled = PlayerPrefs.GetInt("VisualEffectsEnabled", 1) == 1;
@@ -125,7 +126,7 @@ namespace GamePlay.Script
         {
             visualEffectsEnabled = enabled;
         }
-        
+
         private void CreateStars()
         {
             if (!visualEffectsEnabled) return; // �������� �����
@@ -147,42 +148,72 @@ namespace GamePlay.Script
 
         public void EndSong()
         {
-            if (combo > maxCombo)
-                maxCombo = combo;
+            Debug.Log("=== SAVING RECORDS ===");
+            Debug.Log($"Level: {Date.NameSong}");
+            Debug.Log($"Score: {score}");
 
             LoadRecords();
+
+            // Проверяем наличие записей
+            if (Date.LevelRecords.ContainsKey(Date.NameSong))
+            {
+                string recordsBefore = string.Join(", ", Date.LevelRecords[Date.NameSong]);
+                Debug.Log($"Records before update: {recordsBefore}");
+            }
+            else
+            {
+                Debug.Log("No records found for this level!");
+            }
+
             UpdateRecords(score);
 
-            Date.PreviousScore = score;
-            Date.Combo = maxCombo;
+            if (Date.LevelRecords.ContainsKey(Date.NameSong))
+            {
+                string recordsAfter = string.Join(", ", Date.LevelRecords[Date.NameSong]);
+                Debug.Log($"Records after update: {recordsAfter}");
+            }
+
             SaveRecords();
             SceneManager.LoadScene("Result");
         }
 
         private void UpdateRecords(int newScore)
         {
-            // Создаем временный список для всех записей
-            var recordsList = Date.Records.ToList();
+            if (string.IsNullOrEmpty(Date.NameSong))
+            {
+                Debug.LogError("Level name is not set!");
+                return;
+            }
+
+            // Гарантируем наличие записи для уровня
+            if (!Date.LevelRecords.ContainsKey(Date.NameSong))
+            {
+                Date.LevelRecords[Date.NameSong] = new int[5];
+            }
+
+            // Получаем текущие записи
+            List<int> recordsList = Date.LevelRecords[Date.NameSong].ToList();
+            new List<int>();
 
             // Добавляем новый результат
             recordsList.Add(newScore);
 
-            // Сортируем по убыванию и берем топ-5
-            recordsList = recordsList
+            // Сортируем и берем топ-5
+            var sortedRecords = recordsList
                 .OrderByDescending(r => r)
                 .Take(maxRecords)
                 .ToList();
 
             // Дополняем нулями если нужно
-            while (recordsList.Count < maxRecords)
+            while (sortedRecords.Count < maxRecords)
             {
-                recordsList.Add(0);
+                sortedRecords.Add(0);
             }
 
-            Date.Records = recordsList.ToArray();
+            // Обновляем словарь
+            Date.LevelRecords[Date.NameSong] = sortedRecords.ToArray();
         }
 
-        // �������� ����� ���������� ��������-���� (��� ���������)
         public void UpdateProgressBar(float value)
         {
             if (progressBar != null)
@@ -207,22 +238,112 @@ namespace GamePlay.Script
 
         private void LoadRecords()
         {
-            var listJson = PlayerPrefs.GetString("SavedRecords");
-            if (!string.IsNullOrEmpty(listJson))
+            string allRecordsJson = PlayerPrefs.GetString("AllLevelRecords");
+
+            // Всегда инициализируем словарь
+            Date.LevelRecords = new Dictionary<string, int[]>();
+
+            if (!string.IsNullOrEmpty(allRecordsJson))
             {
-                Date.Records = JsonUtility.FromJson<SupportClass<int>>(listJson).Item;
+                try
+                {
+                    LevelRecords saveData = JsonUtility.FromJson<LevelRecords>(allRecordsJson);
+                    if (saveData != null)
+                    {
+                        Date.LevelRecords = saveData.ToDictionarySafe();
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Error loading records: {e.Message}");
+                }
             }
-            else
+
+            // Гарантируем что текущий уровень есть в словаре
+            if (!string.IsNullOrEmpty(Date.NameSong) &&
+                !Date.LevelRecords.ContainsKey(Date.NameSong))
             {
-                Date.Records = new int[maxRecords];
+                Date.LevelRecords[Date.NameSong] = new int[5];
             }
         }
 
         private void SaveRecords()
         {
-            var listJson = JsonUtility.ToJson(new SupportClass<int>(Date.Records), true);
-            PlayerPrefs.SetString("SavedRecords", listJson);
+            // Убедитесь что словарь инициализирован
+            if (Date.LevelRecords == null)
+            {
+                Debug.LogWarning("LevelRecords is null during save!");
+                Date.LevelRecords = new Dictionary<string, int[]>();
+            }
+
+            // Создаем объект для сохранения
+            LevelRecords saveData = new LevelRecords(Date.LevelRecords);
+
+            // Сериализуем
+            string allRecordsJson = JsonUtility.ToJson(saveData, true);
+
+            // Логируем для отладки
+            Debug.Log($"Saving JSON: {allRecordsJson}");
+            Debug.Log($"Keys count: {saveData.Keys?.Length}, Values count: {saveData.Values?.Length}");
+
+            PlayerPrefs.SetString("AllLevelRecords", allRecordsJson);
             PlayerPrefs.Save();
+        }
+
+        [System.Serializable]
+        public class LevelRecords
+        {
+            public string[] Keys;
+            public SupportClass[] Values; // Исправлено!
+
+            [System.Serializable]
+            public class SupportClass
+            {
+                public int[] Item;
+
+                public SupportClass() { }
+
+                public SupportClass(int[] array)
+                {
+                    Item = array;
+                }
+            }
+
+            public LevelRecords()
+            {
+                Keys = new string[0];
+                Values = new SupportClass[0];
+            }
+
+            public LevelRecords(Dictionary<string, int[]> dict)
+            {
+                if (dict == null)
+                {
+                    Keys = new string[0];
+                    Values = new SupportClass[0];
+                    return;
+                }
+
+                Keys = dict.Keys.ToArray();
+                Values = dict.Values.Select(v => new SupportClass(v)).ToArray();
+            }
+
+            public Dictionary<string, int[]> ToDictionarySafe()
+            {
+                var result = new Dictionary<string, int[]>();
+                if (Keys == null || Values == null)
+                    return result;
+
+                int count = Mathf.Min(Keys.Length, Values.Length);
+                for (int i = 0; i < count; i++)
+                {
+                    if (Keys[i] != null && Values[i] != null)
+                    {
+                        result[Keys[i]] = Values[i].Item;
+                    }
+                }
+                return result;
+            }
         }
     }
 }

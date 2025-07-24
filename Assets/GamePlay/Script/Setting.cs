@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 namespace GamePlay.Script
 {
     public static class Date
@@ -8,8 +10,16 @@ namespace GamePlay.Script
         public static int PreviousScore;
         public static int MaxScore = 100000;
         public static int Combo;
-        public static string NameSong = "music";
+        public static string NameSong;
         public static string NameVideo;
+        public static string CurrentLevel; // Для передачи уровня в tableScript
+        // Инициализируем словарь при первом доступе
+        private static Dictionary<string, int[]> _levelRecords;
+        public static Dictionary<string, int[]> LevelRecords
+        {
+            get => _levelRecords ?? (_levelRecords = new Dictionary<string, int[]>());
+            set => _levelRecords = value;
+        }
 
     }
     public class SupportClass<T>
