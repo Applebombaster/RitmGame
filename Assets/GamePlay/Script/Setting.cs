@@ -1,10 +1,14 @@
-
 using System.Collections.Generic;
 
 namespace GamePlay.Script
 {
     public static class Date
     {
+        // Новая статистика
+        public static int PerfectHits;
+        public static int GoodHits;
+        public static int Misses;
+        public static int TotalNotes;
         public static float RadiusCircle = 10.0f;
         public static int[] Records = new int[5];
         public static int PreviousScore;

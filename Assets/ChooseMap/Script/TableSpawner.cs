@@ -15,11 +15,17 @@ public class TableSpawner : MonoBehaviour
         Date.CurrentLevel = Date.NameSong;
 
         LoadRecords();
-        SpawnTables();
     }
 
-    private void SpawnTables()
+    // Делаем метод публичным для вызова из SceneScript
+    public void SpawnTables()
     {
+        // Очищаем существующие записи
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+
         var parentRectTransform = GetComponent<RectTransform>();
 
         // Получаем рекорды для текущего уровня

@@ -16,23 +16,16 @@ public class tableScript : MonoBehaviour
         if (!isActive) return;
 
         // Получаем рекорды для текущего уровня
-        if (!Date.LevelRecords.ContainsKey(Date.CurrentLevel))
-        {
-            Debug.LogWarning($"No records found for: {Date.CurrentLevel}");
-            return;
-        }
+        int[] records = Date.LevelRecords.ContainsKey(Date.CurrentLevel) ?
+            Date.LevelRecords[Date.CurrentLevel] :
+            new int[0];
 
-        int[] records = Date.LevelRecords[Date.CurrentLevel];
+        if (index >= records.Length) return;
 
-        if (index >= records.Length)
-        {
-            Debug.LogWarning($"Index out of range: {index}");
-            return;
-        }
-
-        // Обновляем записи
+        // Обновляем только активные записи
         scoreText.text = "Score: " + records[index].ToString("0000000");
 
+        // Рассчитываем точность как процент от максимального счета
         if (Date.MaxScore > 0)
         {
             float percentage = (float)records[index] / Date.MaxScore;

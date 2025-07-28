@@ -11,6 +11,11 @@ namespace GamePlay.Script
 {
     public class LogicScript : MonoBehaviour
     {
+        // Новая статистика
+        private int perfectHits = 0;   // 100 очков
+        private int goodHits = 0;      // 50 очков
+        private int misses = 0;        // Промахи
+
         public TMP_Text scoreText;
         public TMP_Text comboText;
         public GameObject progressBar;
@@ -52,6 +57,7 @@ namespace GamePlay.Script
                 score += 100 + combo++;
                 ShowScoreEffect(score100Prefab);
                 CreateStars();
+                perfectHits++; // Новая статистика
             }
             else if (distance < 2.6f)
             {
@@ -60,9 +66,13 @@ namespace GamePlay.Script
                 combo = 0;
                 score += 50;
                 ShowScoreEffect(score50Prefab);
+                goodHits++; // Новая статистика
             }
             else
+            {
                 ShowMissEffect();
+                misses++; // Новая статистика
+            }
 
             UpdateScore(); // �������� �����
         }
@@ -148,32 +158,24 @@ namespace GamePlay.Script
 
         public void EndSong()
         {
-            Debug.Log("=== SAVING RECORDS ===");
-            Debug.Log($"Level: {Date.NameSong}");
-            Debug.Log($"Score: {score}");
+            if (combo > maxCombo)
+                maxCombo = combo;
 
+            // Сохраняем статистику
+            Date.PerfectHits = perfectHits;
+            Date.GoodHits = goodHits;
+            Date.Misses = misses;
+            Date.TotalNotes = perfectHits + goodHits + misses;
+            
+            // Сохраняем результат
+            Date.PreviousScore = score;
+            Date.Combo = maxCombo;
+
+            // Обновляем рекорды
             LoadRecords();
-
-            // Проверяем наличие записей
-            if (Date.LevelRecords.ContainsKey(Date.NameSong))
-            {
-                string recordsBefore = string.Join(", ", Date.LevelRecords[Date.NameSong]);
-                Debug.Log($"Records before update: {recordsBefore}");
-            }
-            else
-            {
-                Debug.Log("No records found for this level!");
-            }
-
             UpdateRecords(score);
-
-            if (Date.LevelRecords.ContainsKey(Date.NameSong))
-            {
-                string recordsAfter = string.Join(", ", Date.LevelRecords[Date.NameSong]);
-                Debug.Log($"Records after update: {recordsAfter}");
-            }
-
             SaveRecords();
+
             SceneManager.LoadScene("Result");
         }
 
