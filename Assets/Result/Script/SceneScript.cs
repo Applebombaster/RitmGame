@@ -37,13 +37,13 @@ public class SceneScript : MonoBehaviour
             accuracyBar.fillAmount = accuracy;
 
             // Цвет в зависимости от точности
-            if (accuracy >= 0.8f)
+            if (accuracy >= 1.0f)
                 accuracyBar.color = Color.yellow;
-            else if (accuracy >= 0.6f)
+            else if (accuracy >= 0.75f)
                 accuracyBar.color = Color.green;
-            else if (accuracy >= 0.4f)
+            else if (accuracy >= 0.5f)
                 accuracyBar.color = Color.blue;
-            else if (accuracy >= 0.2f)
+            else if (accuracy >= 0.25f)
                 accuracyBar.color = Color.magenta;
             else
                 accuracyBar.color = Color.red;
